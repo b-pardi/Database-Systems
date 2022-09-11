@@ -1,7 +1,6 @@
 -- SQLite
 -- https://sqlite.org/lang_createtable.html
-DROP TABLE Cities_Loc;
-DROP TABLE Cities_Population;
+
 
 CREATE TABLE Cities_Loc (
     name CHAR(50) PRIMARY KEY,

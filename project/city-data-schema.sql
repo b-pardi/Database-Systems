@@ -1,4 +1,4 @@
-CREATE TABLE AQI(
+CREATE TABLE AQI (
     City VARCHAR(20) NOT NULL,
     latitude DECIMAL(8,5) NOT NULL,
     longitude DECIMAL(8,5) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE AQI(
     Ozone INTEGER(4),
     PM10 INTEGER(4),
     PM25 INTEGER(4)
-)
+);
 
 CREATE TABLE AQI_Forecast(
     City VARCHAR(20) NOT NULL,
@@ -18,8 +18,8 @@ CREATE TABLE AQI_Forecast(
     AQI INTEGER(3) NOT NULL,
     PM10 INTEGER(4),
     PM25 INTEGER(4)
-)
+);
  
 CREATE TABLE Weather(
     City VARCHAR(20) NOT NULL
-)
+);
