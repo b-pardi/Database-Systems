@@ -6,7 +6,7 @@ ON orders.o_custkey = customer.c_custkey
 JOIN nation
 ON nation.n_nationkey = customer.c_nationkey
 JOIN region
-ON region.r_regionkey = nation.n_nationkey
+ON region.r_regionkey = nation.n_regionkey
 
 WHERE region.r_name = 'ASIA'
 AND orders.o_orderdate BETWEEN '1997-01-01T00:00:00.000' AND '1997-12-31T00:00:00.000'
