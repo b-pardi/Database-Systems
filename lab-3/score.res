@@ -7,10 +7,10 @@ Query 6: PASS
 Query 7: FAIL
 Query 8: PASS
 Query 9: PASS
-Query 10: FAIL
-Query 11: FAIL
-Query 12: FAIL
-Query 13: FAIL
-Query 14: FAIL
+Query 10: PASS
+Query 11: PASS
+Query 12: PASS
+Query 13: PASS
+Query 14: PASS
 Query 15: FAIL
-Total score: 8
+Total score: 13
