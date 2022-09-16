@@ -9,3 +9,4 @@ ON orders.o_custkey = customer.c_custkey
 
 WHERE c_name = 'Customer#000000020'
 
+-
