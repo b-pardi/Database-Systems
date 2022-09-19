@@ -33,3 +33,15 @@ CREATE TABLE AQI_Forecast(
 CREATE TABLE Weather(
     city VARCHAR(20) NOT NULL
 );
+
+CREATE TABLE Radiation(
+    levels INTEGER(10) NOT NULL
+);
+
+CREATE TABLE Toxicology(
+    levels INTEGER(10) NOT NULL
+);
+
+CREATE TABLE Disease_Rates(
+    cancer INTEGER(10) NOT NULL
+);
