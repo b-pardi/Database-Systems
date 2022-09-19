@@ -5,7 +5,7 @@ import sys
 from key import key
 
 #loc = input("Enter a city: ")
-cities_df = pd.read_csv("uscities.csv")
+cities_df = pd.read_csv("data/uscities.csv")
 loc = cities_df['city']
 
 # air quality
@@ -43,7 +43,7 @@ def tryAppend(dest_dict, dest_key, src_dict, src_keys):
 
 # filling request and scraping API data for each city,
 # putting into dictionary, then into dataframe
-num_cities = 10
+num_cities = 100
 for i in range(num_cities):
     try:
         # send API request
@@ -55,8 +55,8 @@ for i in range(num_cities):
 
     # check if entered city is valid
     if r.json()['data'] == "Unknown station":
-        print("Invalid Location")
-        sys.exit(1)
+        print(f"Invalid Location: {loc[i]}")
+        continue
 
     # takes json file from request, converts into dictionary
     air_data = r.json()['data']
@@ -92,5 +92,7 @@ for i in range(num_cities):
 
 aqi_df = pd.DataFrame(air_dict)
 forecasted_aqi_df = pd.DataFrame(air_forecast_dict)
+aqi_df.to_csv("data/aqi.csv", index=False)
+forecasted_aqi_df.to_csv("data/forecasted_aqi.csv", index=False)
 print(aqi_df.head())
 print(forecasted_aqi_df.head())
