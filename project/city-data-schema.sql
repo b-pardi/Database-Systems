@@ -35,13 +35,16 @@ CREATE TABLE Weather(
 );
 
 CREATE TABLE Radiation(
+    latitude DECIMAL(8,5) NOT NULL,
+    longitude DECIMAL(8,5) NOT NULL,
+    avg_dni DECIMAL(6, 4),
+    avg_ghi DECIMAL(6, 4)
+);
+
+CREATE TABLE Water_Quality(
     levels INTEGER(10) NOT NULL
 );
 
-CREATE TABLE Toxicology(
-    levels INTEGER(10) NOT NULL
-);
-
-CREATE TABLE Disease_Rates(
+CREATE TABLE Crime_Rates(
     cancer INTEGER(10) NOT NULL
 );
