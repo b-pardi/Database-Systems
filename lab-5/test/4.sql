@@ -1,6 +1,6 @@
 -- How many customers and suppliers are in every country from AFRICA
 /*
-SELECT custs_nat.n_name, supps_nat.n_name, COUNT(DISTINCT c_name), COUNT(DISTINCT s_name)
+SELECT custs_nat.n_name, COUNT(DISTINCT c_name), COUNT(DISTINCT s_name)
 FROM customer, supplier,
 nation as custs_nat,
 nation as supps_nat,
@@ -18,9 +18,22 @@ AND supps_reg.r_name = 'AFRICA'
 GROUP BY custs_nat.n_name, supps_nat.n_name
 */
 
-SELECT n_name, COUNT(DISTINCT c_name), COUNT(DISTINCT s_name)
-FROM customer, supplier,
-nation as custs_nat,
-nation as supps_nat,
-region as custs_reg,
-region as supps_reg
+    SELECT n_name, COUNT(DISTINCT c_name)
+    FROM customer, nation, region
+
+    WHERE c_nationkey = n_nationkey
+    AND n_regionkey = r_regionkey
+    AND r_name = 'AFRICA'
+
+    GROUP BY n_name
+
+    JOIN
+
+    (SELECT COUNT(DISTINCT s_name)
+    FROM supplier, nation, region
+
+    WHERE s_nationkey = n_nationkey
+    AND n_regionkey = r_regionkey
+    AND r_name = 'AFRICA'
+
+    GROUP BY n_name)
