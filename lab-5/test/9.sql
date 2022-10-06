@@ -13,5 +13,9 @@ FROM part, (SELECT p_name as total_pname,
     ORDER BY total_val DESC ) total_tbl
 
 WHERE p_name = total_pname
-
-LIMIT (COUNT(total_tbl.total_pname) * 0.01)
+LIMIT (SELECT COUNT(p_name) as p_count
+    FROM partsupp, part, nation, supplier
+    WHERE p_partkey = ps_partkey
+    AND ps_suppkey = s_suppkey
+    AND s_nationkey = n_nationkey
+    AND n_name = 'UNITED STATES') / 100
