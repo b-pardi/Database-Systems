@@ -5,10 +5,11 @@
 SELECT min(l_discount)
 FROM lineitem, orders
 WHERE l_orderkey = o_orderkey
-    AND o_orderdate LIKE '1996-10%'
-    and l_discount >
-        (select avg(o_discount)
-        from
-            (select l_orderkey, avg(l_discount) as o_discount
-            from lineitem
-            group by l_orderkey) sq1);
+
+AND o_orderdate LIKE '1996-10%'
+AND l_discount >
+    (SELECT avg(o_discount)
+    FROM
+        (SELECT l_orderkey, avg(l_discount) as o_discount
+        FROM lineitem
+        GROUP BY l_orderkey) sq1);
