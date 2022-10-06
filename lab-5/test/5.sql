@@ -17,4 +17,4 @@ FROM ( SELECT *
     AND p_type LIKE '%STEEL%'
     )
 GROUP BY p_size
-ORDER BY s_name ASC
+ORDER BY s_name ASC 
