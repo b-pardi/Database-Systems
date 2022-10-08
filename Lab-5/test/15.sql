@@ -6,7 +6,7 @@
 -- find revenue from line items ordered by cust in given reg supplied by suppliers from given nat
 -- rev def as l_extendedprice*(1-l_discount)
 -- of us in asia in 1997 (l_shipdate)
-
+/*
 SELECT us_revenue / total_revenue
 FROM (SELECT SUM(DISTINCT l_extendedprice*(1-l_discount)) as us_revenue,
     cust_nat.n_name, supp_reg.r_name
@@ -23,8 +23,10 @@ FROM (SELECT SUM(DISTINCT l_extendedprice*(1-l_discount)) as us_revenue,
     AND c_nationkey = cust_nat.n_nationkey
     AND cust_nat.n_regionkey = cust_reg.r_regionkey
 
-    AND cust_nat.n_name = 'UNITED STATES'
-    AND supp_reg.r_name = 'ASIA'
+    --AND cust_nat.n_name = 'UNITED STATES'
+    --AND supp_reg.r_name = 'ASIA'
+    AND cust_reg.r_name = 'ASIA'
+
     AND l_shipdate LIKE '1997%' ) ,
 
     (SELECT SUM(DISTINCT l_extendedprice*(1-l_discount)) as total_revenue,
@@ -42,6 +44,30 @@ FROM (SELECT SUM(DISTINCT l_extendedprice*(1-l_discount)) as us_revenue,
     AND c_nationkey = cust_nat.n_nationkey
     AND cust_nat.n_regionkey = cust_reg.r_regionkey
 
-    AND cust_nat.n_name <> 'UNITED STATES'
-    AND supp_reg.r_name = 'ASIA'
+    --AND cust_nat.n_name <> 'UNITED STATES'
+    --AND supp_reg.r_name = 'ASIA'
     AND l_shipdate LIKE '1997%')
+    */
+
+SELECT us_market_share / total_market_share
+    FROM (SELECT SUM(l_extendedprice*(1-l_discount)) as total_market_share
+    FROM orders, customer, region, nation, lineitem
+    WHERE o_custkey = c_custkey
+    AND l_orderkey = o_orderkey
+    AND c_nationkey = n_nationkey
+    AND n_regionkey = r_regionkey
+    AND r_name = 'ASIA'
+    AND l_shipdate LIKE '1997%') tm,
+
+    (SELECT SUM(l_extendedprice*(1-l_discount)) as us_market_share
+    FROM orders, customer, region, nation as cust_nat, nation as supp_nat,
+    lineitem, supplier
+    WHERE o_custkey = c_custkey
+    AND l_orderkey = o_orderkey
+    AND c_nationkey = cust_nat.n_nationkey
+    AND l_suppkey = s_suppkey
+    AND s_nationkey = supp_nat.n_nationkey
+    AND cust_nat.n_regionkey = r_regionkey
+    AND supp_nat.n_name = 'UNITED STATES'
+    AND r_name = 'ASIA'
+    AND l_shipdate LIKE '1997%') usm;
