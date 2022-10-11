@@ -1,0 +1,16 @@
+Query 1: PASS
+Query 2: PASS
+Query 3: PASS
+Query 4: PASS
+Query 5: PASS
+Query 6: PASS
+Query 7: FAIL
+Query 8: FAIL
+Query 9: FAIL
+Query 10: FAIL
+Query 11: PASS
+Query 12: PASS
+Query 13: PASS
+Query 14: FAIL
+Query 15: FAIL
+Total score: 9
