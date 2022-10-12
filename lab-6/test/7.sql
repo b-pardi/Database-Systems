@@ -10,6 +10,6 @@ FROM (SELECT s_suppkey, o_orderkey
     AND c_nationkey = n_nationkey
 
     AND (n_name = 'FRANCE' OR n_name = 'GERMANY')
-    GROUP BY o_orderkey
-    HAVING COUNT(o_orderkey) < 50
+    GROUP BY s_suppkey
+    HAVING COUNT(DISTINCT o_orderkey) < 50
 ) as supp_sq
