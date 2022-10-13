@@ -11,22 +11,29 @@ SELECT DISTINCT p_name
 
     AND r_name = 'AMERICA'
 
-    AND p_partkey IN (SELECT DISTINCT ps_partkey
-        FROM partsupp, supplier, nation, region
-        WHERE ps_suppkey = s_suppkey
+    AND p_partkey IN (SELECT DISTINCT l_partkey
+        FROM lineitem, supplier, nation, region
+        WHERE s_suppkey = l_suppkey
         AND s_nationkey = n_nationkey
         AND n_regionkey = r_regionkey
 
         AND r_name = 'ASIA'
-        GROUP BY ps_partkey
+        GROUP BY l_partkey
         HAVING COUNT(s_suppkey) = 3
     )
     
+
 /*
-SELECT DISTINCT p_name
-FROM supplier, nation, region, lineitem, part
-WHERE s_nationkey = n_nationkey
+SELECT p_name
+FROM partsupp, supplier, nation, region, part
+
+WHERE ps_suppkey = s_suppkey
+AND p_partkey = ps_partkey
+AND s_nationkey = n_nationkey
 AND n_regionkey = r_regionkey
-AND 
-AND r_name = 'ASIA'
-*/
+
+AND p_partkey IN (SELECT l_partkey
+    FROM orders, lineitem, 
+
+    WHERE 
+)*/
