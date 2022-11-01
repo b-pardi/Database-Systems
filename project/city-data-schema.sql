@@ -1,10 +1,16 @@
+DROP TABLE IF EXISTS Cities_General;
+DROP TABLE IF EXISTS AQI;
+DROP TABLE IF EXISTS AQI_Forecast;
+DROP TABLE IF EXISTS Current_Weather;
+DROP TABLE IF EXISTS Forecasted_Weather;
+DROP TABLE IF EXISTS Radiation;
+DROP TABLE IF EXISTS Water_Quality;
+DROP TABLE IF EXISTS Crime_Rates;
+
 -- Brandon
-CREATE TABLE General (
-    city_key INTEGER(12) NOT NULL PRIMARY KEY,
-    city VARCHAR(20) NOT NULL,
+CREATE TABLE Cities_General (
+    city_state VARCHAR(20) NOT NULL PRIMARY KEY,
     county VARCHAR(20) NOT NULL,
-    city_state VARCHAR(20) NOT NULL UNIQUE,
-    state_id CHAR(2) NOT NULL,
     populations INTEGER(10) NOT NULL,
     pop_density INTEGER(6) NOT NULL,
     time_zone VARCHAR(20) NOT NULL,
@@ -13,49 +19,66 @@ CREATE TABLE General (
 
 -- Brandon
 CREATE TABLE AQI (
-    city_key INTEGER(12) NOT NULL PRIMARY KEY,
-    city VARCHAR(20) NOT NULL,
     latitude DECIMAL(8,5) NOT NULL,
     longitude DECIMAL(8,5) NOT NULL,
-    Time_updated datetime,
+    city_state VARCHAR(20) NOT NULL,
+    time_updated datetime,
     AQI INTEGER(3) NOT NULL,
     CO INTEGER(4),
     H INTEGER(4),
     NO2 INTEGER(4),
     Ozone INTEGER(4),
-    PM10 INTEGER(4),
-    PM25 INTEGER(4)
+    pm10 INTEGER(4),
+    pm25 INTEGER(4),
+    PRIMARY KEY (latitude, longitude)
 );
 
 -- Brandon
 CREATE TABLE AQI_Forecast(
-    city_key INTEGER(12) NOT NULL PRIMARY KEY,
-    city VARCHAR(20) NOT NULL,
+    aqi_date_loc datetime PRIMARY KEY,
     time_updated datetime,
     AQI INTEGER(3) NOT NULL,
-    PM10 INTEGER(4),
-    PM25 INTEGER(4)
+    pm10 INTEGER(4),
+    pm25 INTEGER(4)
 );
  
 -- Isaac
-CREATE TABLE Weather(
-    city VARCHAR(20) NOT NULL
+CREATE TABLE Current_Weather(
+    avg_coord DECIMAL(8,5) PRIMARY KEY,
+    city_state VARCHAR(20) NOT NULL,
+    day_temp INTEGER(3) NOT NULL,
+    day_wind INTEGER(3) NOT NULL,
+    day_descr INTEGER(3) NOT NULL,
+    night_temp INTEGER(3) NOT NULL,
+    night_wind INTEGER(3) NOT NULL,
+    night_descr INTEGER(3) NOT NULL
+);
+
+-- Isaac
+CREATE TABLE Forecasted_Weather(
+    weather_date_loc datetime PRIMARY KEY,
+    avg_coord DECIMAL(8,5) NOT NULL,
+    day_temp INTEGER(3) NOT NULL,
+    day_wind INTEGER(3) NOT NULL,
+    day_descr INTEGER(3) NOT NULL,
+    night_temp INTEGER(3) NOT NULL,
+    night_wind INTEGER(3) NOT NULL,
+    night_descr INTEGER(3) NOT NULL
 );
 
 -- Isaac
 CREATE TABLE Radiation(
-    latitude DECIMAL(8,4) NOT NULL,
-    longitude DECIMAL(8,4) NOT NULL,
-    avg_dni DECIMAL(6, 4),
-    avg_ghi DECIMAL(6, 4)
+    address VARCHAR(30) PRIMARY KEY,
+    avg_coord DECIMAL(8,5) NOT NULL,
+    avg_dni DECIMAL(6,4),
+    avg_ghi DECIMAL(6,4),
+    avg_lat_tilt DECIMAL(6,4)
 );
 
 -- Brandon
 CREATE TABLE Water_Quality(
     usgs_id INTEGER(10) NOT NULL PRIMARY KEY,
-    city VARCHAR(20) NOT NULL,
-    state VARCHAR(2) NOT NULL,
-    city_state VARCHAR(20) NOT NULL UNIQUE
+    city_state VARCHAR(20) NOT NULL,
     hardness INTEGER(3),
     ph FLOAT DECIMAL(4,2),
     conductance INTEGER(5),
@@ -71,5 +94,10 @@ CREATE TABLE Water_Quality(
 
 -- Isaac
 CREATE TABLE Crime_Rates(
-    crime INTEGER(10) NOT NULL
+    ori INTEGER(10) NOT NULL PRIMARY KEY, -- originating agency
+    city_state VARCHAR(20) NOT NULL UNIQUE,
+    offense VARCHAR(20) NOT NULL,
+    yr INTEGER(4) NOT NULL,
+    cleared INTEGER(6),
+    actual INTEGER(6)
 );
