@@ -41,6 +41,7 @@ def createTable(_conn):
                     w_capacity decimal(6,0) not null,
                     w_suppkey decimal(9,0) not null,
                     w_nationkey decimal(2,0) not null
+                    )
                     """
         _conn.execute(sql)
 
@@ -72,6 +73,22 @@ def dropTable(_conn):
 def populateTable(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Populate table")
+
+    try:
+        warehouse = [
+            # 2 warehouses per supplier
+            # (key, name, cap, suppkey, natkey)
+            
+        ]
+
+        sql = "INSERT INTO warehouse VALUES(?, ?, ?)"
+        _conn.executemany(sql, warehouse)
+
+        _conn.commit()
+        print("success")
+    except Error as exc:
+        _conn.rollback()
+        print(exc)
 
     print("++++++++++++++++++++++++++++++++++")
 
@@ -119,6 +136,26 @@ def main():
     with conn:
         dropTable(conn)
         createTable(conn)
+
+        try:
+            sql = """
+                select l_orderkey, l_extendedprice
+                from lineitem
+                order by l_extendedprice ASC
+            """
+            cur = conn.cursor()
+            cur.execute(sql)
+            l = '{:>10} {:>10}'.format("l_orderkey", "l_extendedprice")
+            print(l)
+
+            rows = cur.fetchall()
+            for row in rows:
+                l = '{:>10} {:>10}'.format(row[0], row[1])
+                print(l)
+
+        except Error as exc:
+            print(exc)
+            
         populateTable(conn)
 
         Q1(conn)
