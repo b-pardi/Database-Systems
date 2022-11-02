@@ -41,7 +41,7 @@ def createTable(_conn):
                     w_capacity decimal(6,0) not null,
                     w_suppkey decimal(9,0) not null,
                     w_nationkey decimal(2,0) not null
-                    """
+                    )"""
         _conn.execute(sql)
 
         _conn.commit()
@@ -72,6 +72,22 @@ def dropTable(_conn):
 def populateTable(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Populate table")
+
+    try:
+        sql = """ select s_suppname
+        from supplier
+        group by 
+        order by 
+        limit 2
+        """
+
+        args = []
+        _conn.execute(sql, args)
+        _conn.commit()
+        print("success")
+    except Error as err:
+        _conn.rollback()
+        print(err)
 
     print("++++++++++++++++++++++++++++++++++")
 
