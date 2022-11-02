@@ -41,8 +41,7 @@ def createTable(_conn):
                     w_capacity decimal(6,0) not null,
                     w_suppkey decimal(9,0) not null,
                     w_nationkey decimal(2,0) not null
-                    )
-                    """
+                    )"""
         _conn.execute(sql)
 
         _conn.commit()
@@ -75,20 +74,20 @@ def populateTable(_conn):
     print("Populate table")
 
     try:
-        warehouse = [
-            # 2 warehouses per supplier
-            # (key, name, cap, suppkey, natkey)
-            
-        ]
+        sql = """ select s_suppname
+        from supplier
+        group by 
+        order by 
+        limit 2
+        """
 
-        sql = "INSERT INTO warehouse VALUES(?, ?, ?)"
-        _conn.executemany(sql, warehouse)
-
+        args = []
+        _conn.execute(sql, args)
         _conn.commit()
         print("success")
-    except Error as exc:
+    except Error as err:
         _conn.rollback()
-        print(exc)
+        print(err)
 
     print("++++++++++++++++++++++++++++++++++")
 
