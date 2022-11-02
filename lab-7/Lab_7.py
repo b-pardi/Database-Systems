@@ -74,16 +74,40 @@ def populateTable(_conn):
     print("Populate table")
 
     try:
-        sql = """ select s_suppname
+        sql = """ select distinct s_name
         from supplier
-        group by 
-        order by 
-        limit 2
         """
+        cur = _conn.cursor()
+        cur.execute(sql)
+        suppliers = cur.fetchall()
 
-        args = []
-        _conn.execute(sql, args)
-        _conn.commit()
+        sql = """ select distinct n_name
+        from nation
+        """
+        cur = _conn.cursor()
+        cur.execute(sql)
+        nations = cur.fetchall()
+
+        sql = """select s_name, n_name, count(distinct l_quantity)
+        from supplier, nation, customer, lineitem, orders
+        where s_suppkey = l_suppkey
+        and l_orderkey = o_orderkey
+        and o_custkey = c_custkey
+        and c_nationkey = n_nationkey
+
+        and s_name = ?
+        and n_name = ?
+        """
+        res = []
+        for s in suppliers:
+            for n in nations:
+                args = [s[0], n[0]]
+                #cur = _conn.cursor()
+                cur.execute(sql, args)
+                res.append(cur.fetchall()[0])
+                
+                print(res)
+
         print("success")
     except Error as err:
         _conn.rollback()
@@ -135,25 +159,6 @@ def main():
     with conn:
         dropTable(conn)
         createTable(conn)
-
-        try:
-            sql = """
-                select l_orderkey, l_extendedprice
-                from lineitem
-                order by l_extendedprice ASC
-            """
-            cur = conn.cursor()
-            cur.execute(sql)
-            l = '{:>10} {:>10}'.format("l_orderkey", "l_extendedprice")
-            print(l)
-
-            rows = cur.fetchall()
-            for row in rows:
-                l = '{:>10} {:>10}'.format(row[0], row[1])
-                print(l)
-
-        except Error as exc:
-            print(exc)
             
         populateTable(conn)
 
