@@ -74,39 +74,72 @@ def populateTable(_conn):
     print("Populate table")
 
     try:
-        sql = """ select distinct s_name
-        from supplier
-        """
-        cur = _conn.cursor()
-        cur.execute(sql)
-        suppliers = cur.fetchall()
-
-        sql = """ select distinct n_name
-        from nation
-        """
-        cur = _conn.cursor()
-        cur.execute(sql)
-        nations = cur.fetchall()
-
-        sql = """select s_name, n_name, count(distinct l_quantity)
-        from supplier, nation, customer, lineitem, orders
+        # query finds where nations have warehouses for each supp
+        sql_nat_name = """select s_name, n_name, count(l_quantity) as ct, sum(p_size) * 2 as cap, n_nationkey as nk
+        from supplier, nation, customer, lineitem, orders, part
         where s_suppkey = l_suppkey
         and l_orderkey = o_orderkey
         and o_custkey = c_custkey
         and c_nationkey = n_nationkey
+        and l_partkey = p_partkey
 
-        and s_name = ?
-        and n_name = ?
+        group by s_name, n_name
+        order by s_name, ct desc, n_name
         """
-        res = []
-        for s in suppliers:
-            for n in nations:
-                args = [s[0], n[0]]
-                #cur = _conn.cursor()
-                cur.execute(sql, args)
-                res.append(cur.fetchall()[0])
-                
-                print(res)
+        cur = _conn.cursor()
+        cur.execute(sql_nat_name)
+        warehouse_nats = cur.fetchall()
+        warehouse_names = []
+        ct = 0
+        # sql query above returns descending list of count for each nation for each supp
+        # compare ct to ct of table, when it increases it means next supplier
+        # grab first 2 of each supp
+        for i in range(len(warehouse_nats)-1):
+            if ct < warehouse_nats[i][2]:
+                n1 = warehouse_nats[i][0] + '___' + warehouse_nats[i][1]
+                n2 = warehouse_nats[i+1][0] + '___' + warehouse_nats[i+1][1]
+                warehouse_names.append((n1, warehouse_nats[i][4]))
+                warehouse_names.append((n2, warehouse_nats[i+1][4]))
+            ct = warehouse_nats[i][2]
+
+        # modify to query to find max cap for each supps nation
+        sql_caps = """select s_name, n_name, ct, max(cap)
+            from (select s_name, n_name, count(l_quantity) as ct, sum(p_size) * 2 as cap
+                from supplier, nation, customer, lineitem, orders, part
+                where s_suppkey = l_suppkey
+                and l_orderkey = o_orderkey
+                and o_custkey = c_custkey
+                and c_nationkey = n_nationkey
+                and l_partkey = p_partkey
+
+                group by s_name, n_name
+                order by s_name, ct desc)
+            group by s_name
+            order by s_name, ct desc"""
+        cur.execute(sql_caps)
+        warehouse_caps = cur.fetchall()
+
+        # put together tuples for warehouses
+        # wId, wName, wCap, sId, nId
+        warehouses = []
+        for i in range(len(warehouse_names)):
+            wId = i+1
+            wName = warehouse_names[i][0]
+            wCap = warehouse_caps[int(i/2)][3]
+            sId = int(i/2)+1
+            nId = warehouse_names[i][1]
+            warehouse = (wId, wName, wCap, sId, nId)
+            warehouses.append(warehouse)
+
+        #print(warehouses)
+
+        # insert warehouse tuples into warehouse table
+        sql_insert = """insert into warehouse (w_warehousekey, w_name,
+                    w_capacity, w_suppkey, w_nationkey)
+                    values(?,?,?,?,?)"""
+        for w in warehouses:
+            _conn.execute(sql_insert, w)
+
 
         print("success")
     except Error as err:
@@ -120,12 +153,54 @@ def Q1(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Q1")
 
+    sql = """select * from warehouse"""
+    cur = _conn.cursor()
+    cur.execute(sql)
+    warehouses = cur.fetchall()
+
+    header = '{:>10} {:<46} {:<4} {:>10} {:>10}'.format(
+            'wId', 'wName', 'wCap', 'sId', 'nId'
+        )
+    print(header)
+    with open("output/1.out", 'w') as out1:
+        out1.write(header)
+        out1.write('\n')
+        for wh in warehouses:
+            entry = '{:>10} {:<46} {:<4} {:>10} {:>10}'.format(
+                wh[0], wh[1], wh[2], wh[3], wh[4]
+            )
+            print(entry)
+            out1.write(entry)
+            out1.write('\n')
+
     print("++++++++++++++++++++++++++++++++++")
 
 
 def Q2(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Q2")
+
+    sql_cap = """select n_name, count(w_name), sum(w_capacity) as ncap
+            from warehouse, nation
+            where w_nationkey = n_nationkey
+
+            group by n_name
+            order by ncap desc"""
+
+    cur = _conn.cursor()
+    cur.execute(sql_cap)
+    nation_caps = cur.fetchall()
+    header = '{:<46} {:<4} {:>10}'.format(
+                'nation', 'numW', 'totCap'
+            )
+
+    with open("output/2.out", 'w') as out2:
+        out2.write(f"{header}\n")
+        for nat in nation_caps:
+            entry = '{:<46} {:<4} {:>10}'.format(
+                nat[0], nat[1], nat[2]
+            )
+            out2.write(f"{entry}\n")
 
     print("++++++++++++++++++++++++++++++++++")
 
