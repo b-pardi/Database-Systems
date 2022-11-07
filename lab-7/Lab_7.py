@@ -209,6 +209,38 @@ def Q3(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Q3")
 
+    sql = """SELECT s_name, n2.n_name, w_name
+        from warehouse, supplier, nation as n1, nation as n2
+        where w_suppkey = s_suppkey
+        and n1.n_nationkey = w_nationkey
+        and n2.n_nationkey = s_nationkey
+
+        and n1.n_name = ? 
+        order by s_name"""
+
+    cur = _conn.cursor()
+    header = '{:<20} {:<20} {:<40}'.format(
+                'supplier', 'nation', 'warehouse'
+            )
+
+    with open("input/3.in", 'r') as infile:
+        args = [line.rstrip() for line in infile]
+    
+    res = []
+    with open("output/3.out", 'w') as out3:
+        out3.write(f"{header}\n")
+        for arg in args:
+            cur.execute(sql, (arg,))
+            res.append(cur.fetchall())
+        for rows in res:
+            for row in rows:
+                print(row)
+                entry = '{:<20} {:<20} {:<40}'.format(
+                row[0], row[1], row[2]
+                )
+                out3.write(f"{entry}\n")
+
+
     print("++++++++++++++++++++++++++++++++++")
 
 
@@ -216,12 +248,73 @@ def Q4(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Q4")
 
+    sql = """select w_name, w_capacity
+        from warehouse, region, nation
+        where w_nationkey = n_nationkey
+        and n_regionkey = r_regionkey
+        and r_name = ?
+        and w_capacity > ?
+        order by w_capacity DESC"""
+
+    with open("input/4.in", 'r') as infile:
+        args = [line.rstrip() for line in infile]
+
+    cur = _conn.cursor()
+    cur.execute(sql, (args[0],args[1]))
+    res = cur.fetchall()
+    header = "{:<42} {:>8}".format("warehouse", "capacity")
+    with open("output/4.out", 'w') as out4:
+        out4.write(f"{header}\n")
+        for line in res:
+            entry = "{:<42} {:>8}".format(line[0], line[1])
+            out4.write(f"{entry}\n")
+
+
     print("++++++++++++++++++++++++++++++++++")
 
 
 def Q5(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Q5")
+
+    sql_regs = """select r_name from region
+            order by r_name ASC"""
+    cur = _conn.cursor()
+    cur.execute(sql_regs)
+    regs = cur.fetchall()
+
+    sql = """select 
+                r_name, 
+                sum(w_capacity)
+        from supplier, region, warehouse, nation as n1, nation as n2
+        where w_nationkey = n1.n_nationkey
+        and n1.n_regionkey = r_regionkey
+        and s_nationkey = n2.n_nationkey
+        and s_suppkey = w_suppkey
+
+        and n2.n_name = ? -- 'UNITED STATES'
+        group by r_name
+        order by r_name"""
+
+    with open("input/5.in", 'r') as infile:
+        args = [line.rstrip() for line in infile]
+
+    cur.execute(sql, (args[0],))
+    res = cur.fetchall()
+    print(res)
+    print(regs)
+    with open("output/5.out", 'w') as out5:
+        header = "{:<32} {:>8}".format('region', 'capacity')
+        out5.write(f"{header}\n")
+        n = len(res)
+        i = 0
+        while i < n:
+            if res[i][0] != regs[i][0]:
+                res.insert(i, (regs[i][0], 0))
+                n+=1
+            entry = "{:<32} {:>8}".format(res[i][0], res[i][1])
+            out5.write(f"{entry}\n")
+            i+=1
 
     print("++++++++++++++++++++++++++++++++++")
 
