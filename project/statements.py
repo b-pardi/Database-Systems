@@ -80,8 +80,21 @@ def updateAQI(conn, loc, AQI, CO, pm10, pm25):
         print(err)
 
 
-def deleteDB(sql, conn):
-    pass
+def deleteAQI(conn, key):
+    print(f"Deleting AQI @: {loc}")
+    sql = """delete from AQI
+    where latitude like ? 
+    and longitude like ?
+    """
+    try:
+        conn.execute(sql, key)
+        conn.commit()
+        print("Success")
+    except Error as err:
+        conn.rollback()
+        print(err)
+
+    
 
 if __name__ == "__main__":
     db = "cities.db"
@@ -89,7 +102,7 @@ if __name__ == "__main__":
 
     ''' USER USE CASE EXAMPLES '''
     
-    # 1 find populous cities with good air quality
+    print("\n# 1 find populous cities with good air quality")
     sql = """ select AQI.city_state
         from Cities_General, AQI
         where Cities_General.city_state = AQI.city_state
@@ -99,7 +112,7 @@ if __name__ == "__main__":
     args = [1000000, 50]
     queryDB(conn, sql, args)
 
-    # 2 find cities with poor air quality, but low water magnesium content
+    print("\n# 2 find cities with poor air quality, but low water magnesium content")
     sql = """ select AQI.city_state
         from Cities_General, AQI, Water_Quality
         where Cities_General.city_state = AQI.city_state
@@ -109,12 +122,48 @@ if __name__ == "__main__":
         """
     args = [200, 80]
     queryDB(conn, sql, args)
+
+    print("\n# 3 find the forecasted weather on the 4th day, in cities with a pop density > 4000")
+    sql = """select fw.city_state, fw.current_temp, fw.description
+    from Current_Weather as cw, Forecasted_Weather as fw, Cities_General as cg
+    where cw.avg_coord = fw.avg_coord
+    and cw.city_state = cg.city_state
+    and weather_date_loc like ?
+    and pop_density > ?
+    """
+    args = ['4%',4000]
+    queryDB(conn, sql, args)
+
+    print("\n# 4 show all major environment qualities of 5 given cities")
+    sql  = """select cg.city_state, AQI, cw.current_temp, hardness, avg_ghi
+    from Cities_General cg, AQI as aq, Water_Quality as wq, Current_Weather as cw, Forecasted_Weather as fw
+    where cg.city_state = aq.city_state
+    and aq.city_state = cw.city_state
+    and cw.avg_coord = fw.avg_coord
+    and wq.city_state = cg.city_state
+    and city_state = ?
+    """
+    locs = ['Sacramento,CA', 'New York,NY', 'Danbury,CT']
+    for loc in locs:
+        queryDB(conn, sql, loc)
     
+    print("\n# 5 find cities with high robbery rates, but good air quality")
+    sql = """select aq.city_state, robbery, aq.AQI
+    from Cities_General as cg, Crime_Rates as cr, AQI as aq
+    where aq.city_state
+    """
+
+    print("\n# 6 find the total amount of arson cases in the 10 most populous cities")
+    sql = """select sum(cr.arson)
+    from Crime_Rates as cr, Cities_General as cg
+    order by populations desc
+    limit 10;
+    """
+
 
     ''' BACK END USE CASE EXAMPLES '''
 
-    # 7 USGS looks for cities that are missing hardness data, but have ph data
-    # fiz water table we dont want all caps for city_state
+    print("\n# 7 USGS looks for cities that are missing hardness data, but have ph data")
     sql = """ select usgs_id
         from Water_Quality, Cities_General
         where Water_Quality.city_state = Cities_General.city_state
@@ -123,25 +172,21 @@ if __name__ == "__main__":
         """
     queryDB(conn, sql)
 
-    # 8 AQI updates several locations
+    print("\n# 8 AQI updates several locations")
     lat_lon = ((38.85,-77.05),(29.68,-95.29),(41.91,-87.72))
     updateAQI(conn, lat_lon[0], 38, 2.2, 19, 64)
     updateAQI(conn, lat_lon[1], 96, 4.9, 39, 112)
     updateAQI(conn, lat_lon[2], 12, 0.5, 9, 22)
 
-    # 9 USGS adds new site for water testing
+    print("\n# 9 USGS adds new site for water testing")
     ids = ["USGS-58917539", "USGS-00589743"]
     city_states = ["Birdingham,AL", "Atlantis,GA"]
     for i in range(len(ids)):
         insertWater(conn, ids[i], city_states[i])
 
-
-    # 10 USGS updates values of newly added sites
-
-
-    # 11 AQI removes an incorrect forecast measurement
-
-
-    # 12 AQI updates cities air quality data
+    print("\n# 10 AQI removes an incorrect forecast measurement")
+    loc = ('38.2881%','-85.7413%')
+    deleteAQI(conn, loc)
     
+
     closeConnection(conn, db)

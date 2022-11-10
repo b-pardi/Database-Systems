@@ -121,7 +121,7 @@ for i in range(0,number_city):
                 weather_forecast_dic['description'].append(description_forecast_list[j])
 
             # append data to current weather
-            current_weathers_dic['avg_coord'].append(average_coordinate)
+            current_weathers_dic['avg_coord'].append(average_coordinate)#
             current_weathers_dic['x_y_grid_pt'].append(x_y)
             current_weathers_dic['city_state'].append(city_name[i])
             current_weathers_dic['current_temp'].append(current_weather)

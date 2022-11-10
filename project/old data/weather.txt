@@ -1,0 +1,6 @@
+grid_endPoint      city_state      current_temp        wind       description
+      35  34 New York,NY             46 10 mph         Mostly Clear  
+     149  48 Los Angeles,CA             59 10 mph         Rain Showers Likely
+      73  70 Chicago,IL              42 10 to 15 mph   Partly Cloudy 
+     108  50 Miami,FL                73 14 mph         Slight Chance Rain Showers
+      89 104 Dallas,TX               80 5 mph          Chance Showers And Thunderstorms
