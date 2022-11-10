@@ -14,13 +14,16 @@ CREATE TABLE Cities_General (
     populations INTEGER(10) NOT NULL,
     pop_density INTEGER(6) NOT NULL,
     time_zone VARCHAR(20) NOT NULL,
+    latitude DECIMAL(8,5) NOT NULL,
+    longitude DECIMAL(8,5) NOT NULL,
     zip_codes VARCHAR(1000)
 );
 
 -- Brandon
 CREATE TABLE AQI (
-    latitude DECIMAL(8,5) NOT NULL,
-    longitude DECIMAL(8,5) NOT NULL,
+    lat_lon VARCHAR(20) PRIMARY KEY,
+    latitude DECIMAL(15,12) NOT NULL,
+    longitude DECIMAL(15,12) NOT NULL,
     city_state VARCHAR(20) NOT NULL,
     time_updated datetime,
     AQI INTEGER(3) NOT NULL,
@@ -29,8 +32,7 @@ CREATE TABLE AQI (
     NO2 INTEGER(4),
     Ozone INTEGER(4),
     pm10 INTEGER(4),
-    pm25 INTEGER(4),
-    PRIMARY KEY (latitude, longitude)
+    pm25 INTEGER(4)
 );
 
 -- Brandon

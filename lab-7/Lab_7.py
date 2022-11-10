@@ -74,39 +74,62 @@ def populateTable(_conn):
     print("Populate table")
 
     try:
-        sql = """ select distinct s_name
-        from supplier
+        # query to grab nations for each supp, with most lineitems ordered by custs in that nation
+        sql_loc = """select s_name, n_name, count(l_quantity) as ct
+            from supplier, nation, customer, lineitem, orders
+            where s_suppkey = l_suppkey
+            and l_orderkey = o_orderkey
+            and o_custkey = c_custkey
+            and c_nationkey = n_nationkey
+
+            group by s_name, n_name
+            order by s_name, ct desc
         """
         cur = _conn.cursor()
-        cur.execute(sql)
-        suppliers = cur.fetchall()
+        warehouse_names = []
+        cur.execute(sql_loc)
+        # grab all rows returned from query
+        warehouse_locs = cur.fetchall()
+        quantity = 0
+        # only need first 2 entries for each supplier
+        # ordered in descending order grouped by supplier,
+        # so count decreases for each supp and then increases when next supp occurs
+        
+        for i in range(len(warehouse_locs)):
+            if quantity < warehouse_locs[i][2]:
+                warehouse_names.append(warehouse_locs[i][0] + '___' + warehouse_locs[i][1])
+                warehouse_names.append(warehouse_locs[i+1][0] + '___' + warehouse_locs[i+1][1])
+            quantity = warehouse_locs[i][2]
+   
+        print(warehouse_names)
 
-        sql = """ select distinct n_name
-        from nation
+        sql_cap = """select s_name, n_name, ct, max(cap)
+                from(select s_name, n_name, count(l_quantity) as ct, sum(p_size) * 2 as cap
+                    from supplier, nation, customer, lineitem, orders, part
+                    where s_suppkey = l_suppkey
+                    and l_orderkey = o_orderkey
+                    and o_custkey = c_custkey
+                    and c_nationkey = n_nationkey
+                    and l_partkey = p_partkey
+
+                    group by s_name, n_name
+                    order by s_name, ct desc)
+                group by s_name
         """
         cur = _conn.cursor()
-        cur.execute(sql)
-        nations = cur.fetchall()
+        cur.execute(sql_cap)
+        # grab all rows returned from query
+        warehouse_caps = cur.fetchall()
+        print(warehouse_caps)
 
-        sql = """select s_name, n_name, count(distinct l_quantity)
-        from supplier, nation, customer, lineitem, orders
-        where s_suppkey = l_suppkey
-        and l_orderkey = o_orderkey
-        and o_custkey = c_custkey
-        and c_nationkey = n_nationkey
+        # wId, wName, wCap, sId, nId
+        warehouses = []
+        for i in range(len(warehouse_names)):
+            sID = int(warehouse_locs[i][0][-4:])
+            entry = (i, warehouse_names[i], warehouse_caps[i][3], sID)
+            warehouses.append(entry)
 
-        and s_name = ?
-        and n_name = ?
-        """
-        res = []
-        for s in suppliers:
-            for n in nations:
-                args = [s[0], n[0]]
-                #cur = _conn.cursor()
-                cur.execute(sql, args)
-                res.append(cur.fetchall()[0])
-                
-                print(res)
+
 
         print("success")
     except Error as err:

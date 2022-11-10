@@ -49,11 +49,36 @@ def queryDB(conn, sql, args=[]):
         conn.rollback()
         print(err)
 
-def insertDB(sql, conn):
-    pass
+def insertWater(conn, id, cs):
+    print(f"Inserting into water @id={id}")
+    try:
+        sql = "insert into Water_Quality (usgs_id, city_state) values (?,?)"
+        args = [id, cs]
+        conn.execute(sql, args)
+        conn.commit()
+        print("Success")
+    except Error as err:
+        conn.rollback()
+        print(err)
 
-def updateDB(sql, conn):
-    pass
+def updateAQI(conn, loc, AQI, CO, pm10, pm25):
+    print(f"Updating AQI @: {loc}")
+    try:
+        sql = f"""update AQI
+            set AQI = ?,
+            CO = ?,
+            pm10 = ?,
+            pm25 = ?
+            where latitude like ? and longitude like ?
+            """
+        args = [AQI, CO, pm10, pm25, str(loc[0])+'%', str(loc[1])+'%']
+        conn.execute(sql, args)
+        conn.commit()
+        print("Success")
+    except Error as err:
+        conn.rollback()
+        print(err)
+
 
 def deleteDB(sql, conn):
     pass
@@ -99,10 +124,16 @@ if __name__ == "__main__":
     queryDB(conn, sql)
 
     # 8 AQI updates several locations
-    
-    updateDB(conn, sql)
+    lat_lon = ((38.85,-77.05),(29.68,-95.29),(41.91,-87.72))
+    updateAQI(conn, lat_lon[0], 38, 2.2, 19, 64)
+    updateAQI(conn, lat_lon[1], 96, 4.9, 39, 112)
+    updateAQI(conn, lat_lon[2], 12, 0.5, 9, 22)
 
     # 9 USGS adds new site for water testing
+    ids = ["USGS-58917539", "USGS-00589743"]
+    city_states = ["Birdingham,AL", "Atlantis,GA"]
+    for i in range(len(ids)):
+        insertWater(conn, ids[i], city_states[i])
 
 
     # 10 USGS updates values of newly added sites
