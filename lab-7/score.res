@@ -1,6 +1,6 @@
-Query 1: FAIL
-Query 2: FAIL
-Query 3: FAIL
-Query 4: FAIL
-Query 5: FAIL
-Total score: 0
+Query 1: PASS
+Query 2: PASS
+Query 3: PASS
+Query 4: PASS
+Query 5: PASS
+Total score: 15
