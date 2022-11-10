@@ -37,26 +37,27 @@ CREATE TABLE AQI_Forecast(
 -- Isaac
 CREATE TABLE Current_Weather(
     avg_coord DECIMAL(8,5) PRIMARY KEY,
+    x_y_grid_pt VARCHAR(20) NOT NULL,
     city_state VARCHAR(20) NOT NULL,
-    day_temp INTEGER(3) NOT NULL,
-    day_wind INTEGER(3) NOT NULL,
-    day_descr INTEGER(3) NOT NULL,
-    night_temp INTEGER(3) NOT NULL,
-    night_wind INTEGER(3) NOT NULL,
-    night_descr INTEGER(3) NOT NULL
+    day_temp INTEGER(3) NOT NULL,--change to current_temp
+    day_wind INTEGER(3) NOT NULL,--change to wind
+    day_descr INTEGER(3) NOT NULL,--change to description
+    night_temp INTEGER(3) NOT NULL,--remove
+    night_wind INTEGER(3) NOT NULL,--remove
+    night_descr INTEGER(3) NOT NULL--remove
 );
 
 -- Isaac
 CREATE TABLE Forecasted_Weather(
-    weather_date datetime PRIMARY KEY
+    weather_date datetime PRIMARY KEY --change to weather date location
     avg_coord DECIMAL(8,5) NOT NULL,
     city_state VARCHAR(20) NOT NULL,
-    day_temp INTEGER(3) NOT NULL,
-    day_wind INTEGER(3) NOT NULL,
-    day_descr INTEGER(3) NOT NULL,
-    night_temp INTEGER(3) NOT NULL,
-    night_wind INTEGER(3) NOT NULL,
-    night_descr INTEGER(3) NOT NULL
+    day_temp INTEGER(3) NOT NULL,--change to temperature
+    day_wind INTEGER(3) NOT NULL,--change to wind
+    day_descr INTEGER(3) NOT NULL,--change to description
+    night_temp INTEGER(3) NOT NULL,--remove
+    night_wind INTEGER(3) NOT NULL,--remove
+    night_descr INTEGER(3) NOT NULL--remove
 );
 
 -- Isaac

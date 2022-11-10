@@ -11,7 +11,7 @@ city_state = cities_df['city_state'].values
 loc = [city[:-3] for city in city_state]
 
 # air quality
-air_dict = {'latitude':[], 'longitude':[], 'city_state':[], 'time_updated': [], 'AQI':[],
+air_dict = {'latitude':[], 'city_state':[], 'city_state':[], 'time_updated': [], 'AQI':[],
                 'CO':[], 'H':[], 'NO2':[], 'Ozone':[], 'pm10':[], 'pm25':[]}
 
 # 3 days out AQI forecast
