@@ -37,13 +37,16 @@ def queryDB(conn, sql, args=[]):
     try:
         cur = conn.cursor()
         cur.execute(sql, args)
-        print("++++++++++++++++++++++++++++++++++\nQuery Process Success\n")
         
+        print("++++++++++++++++++++++++++++++++++\nQuery Process Success\n")
+        print(f"arguments: {args}")
         rows = cur.fetchall()
         if len(rows) == 0:
             print("No results matched query")
-        for row in rows:
-            print(row)
+        else:
+            print("Results:")
+            for row in rows:
+                print(row)
 
     except Error as err:
         conn.rollback()
@@ -135,30 +138,39 @@ if __name__ == "__main__":
     queryDB(conn, sql, args)
 
     print("\n# 4 show all major environment qualities of 5 given cities")
-    sql  = """select cg.city_state, AQI, cw.current_temp, hardness, avg_ghi
-    from Cities_General cg, AQI as aq, Water_Quality as wq, Current_Weather as cw, Forecasted_Weather as fw
+    sql  = """select cg.city_state, AQI, cw.current_temp, avg_ghi, fw.current_temp
+    from Cities_General cg, AQI as aq, Current_Weather as cw, Forecasted_Weather as fw
     where cg.city_state = aq.city_state
     and aq.city_state = cw.city_state
     and cw.avg_coord = fw.avg_coord
-    and wq.city_state = cg.city_state
-    and city_state = ?
+    and cg.city_state = ?
     """
     locs = ['Sacramento,CA', 'New York,NY', 'Danbury,CT']
     for loc in locs:
-        queryDB(conn, sql, loc)
+        queryDB(conn, sql, (loc,))
     
     print("\n# 5 find cities with high robbery rates, but good air quality")
     sql = """select aq.city_state, robbery, aq.AQI
     from Cities_General as cg, Crime_Rates as cr, AQI as aq
-    where aq.city_state
+    where aq.city_state = cg.city_state
+    and cg.city_state = cr.city_state
+    and robbery > ?
+    and aq.AQI < ?
     """
+    args = [30, 70]
+    queryDB(conn, sql, args)
 
-    print("\n# 6 find the total amount of arson cases in the 10 most populous cities")
-    sql = """select sum(cr.arson)
+    print("\n# 6 find the total amount of arson cases in the 20 most populous cities, that are on the E/W coasts")
+    sql = """select sum(distinct cr.arson)
     from Crime_Rates as cr, Cities_General as cg
+    where cr.city_state = cg.city_state
+    and cg.city_state not in (select cg2.city_state from Cities_General as cg2
+                            where cg2.longitude > -115
+                            and cg2.longitude < -82)
     order by populations desc
-    limit 10;
+    limit 20;
     """
+    queryDB(conn, sql)
 
 
     ''' BACK END USE CASE EXAMPLES '''
