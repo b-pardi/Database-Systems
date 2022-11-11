@@ -97,8 +97,6 @@ def deleteAQI(conn, key):
         conn.rollback()
         print(err)
 
-    
-
 if __name__ == "__main__":
     db = "cities.db"
     conn = openConnection(db)
@@ -199,6 +197,6 @@ if __name__ == "__main__":
     print("\n# 10 AQI removes an incorrect forecast measurement")
     loc = ('38.2881%','-85.7413%')
     deleteAQI(conn, loc)
-    
+
 
     closeConnection(conn, db)
