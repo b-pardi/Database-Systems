@@ -1,5 +1,5 @@
 .eqp on
-
+.expert
 select distinct n_name
 from customer, nation, orders
 where c_nationkey=n_nationkey and c_custkey=o_custkey

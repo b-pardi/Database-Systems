@@ -93,4 +93,4 @@ if __name__ == "__main__":
     #add_forecast_na_cities()
     #camel_case_data("data/org_water_updated.csv", 'city_state')
     #drop_rows("data/weather_and_solar.csv",'avg_coord', 'n/a')
-    #drop_dups("data/crime.csv", 'city_state')
+    drop_dups("data/crime.csv", 'city_state')

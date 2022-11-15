@@ -1,0 +1,5 @@
+QUERY PLAN
+|--SEARCH TABLE orders USING INDEX orders_idx_o_orderpriority_o_orderdate (o_orderpriority=? AND o_orderdate>? AND o_orderdate<?)
+|--SEARCH TABLE nation USING COVERING INDEX nation_idx_n_name_n_nationkey (n_name=?)
+`--SEARCH TABLE customer USING COVERING INDEX customer_idx_c_custkey_c_nationkey (c_custkey=? AND c_nationkey=?)
+86
