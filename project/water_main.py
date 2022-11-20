@@ -5,7 +5,7 @@ import xmltodict
 from functools import reduce
 
 # pull information from csv's
-raw_water_df = pd.read_csv("data/adv_water_quality.csv")
+raw_water_df = pd.read_csv("old data/adv_water_quality.csv")
 site_ids = raw_water_df['MonitoringLocationIdentifier'].values
 print(len(site_ids))
 
@@ -13,7 +13,7 @@ print(len(site_ids))
 # since dict keys only occur once
 site_ids = list(dict.fromkeys(site_ids))
 # dict for us geoligical survey site ids, to cross reference API and spreadsheet
-usgs_dict = {'MonitoringLocationIdentifier': [], 'city_state': []}
+usgs_dict = {'usgs_key': [i for i in range(len(site_ids))], 'MonitoringLocationIdentifier': [], 'city_state': []}
 
 '''
 GRAB LOCATION OF SITE ID'S 
@@ -151,3 +151,4 @@ mercury.rename(columns={'MonitoringLocationIdentifier':'usgs_id'}, inplace = Tru
 
 selected_water_df.to_csv("data/selected_water.csv", index=False)
 org_water_df.to_csv("data/org_water.csv", index=False)
+

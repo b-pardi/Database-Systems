@@ -8,3 +8,5 @@
 .import data/weather_and_solar.csv Current_Weather
 .import data/weather_forecast.csv Forecasted_Weather
 .import data/crime.csv Crime_Rates
+.import data/states.csv states_key
+.import data/cities_water_bridge.csv cities_water_relation
