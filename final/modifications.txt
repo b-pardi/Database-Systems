@@ -1,0 +1,20 @@
+Product D 100003
+Product D 200003
+Product D 300002
+Product I 110001 pc A
+Product I 110002 pc A
+Product I 210001 laptop B
+Product I 210002 laptop B
+Product I 310001 printer C
+Product I 310002 printer C
+Distributor I 100001 X 1000
+Distributor I 110002 X 2000
+Distributor I 200001 Y 2000
+Distributor I 210001 Y 2300
+Distributor I 300003 Z 100
+Distributor I 310002 C 150
+Distributor D 110001 A
+Distributor D 200001 Y
+Distributor D 300003 A
+Distributor D 110001 X
+Distributor D 210001 Y
